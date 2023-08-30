@@ -68,7 +68,7 @@ jobs:
         with:
           ref: main
       - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: dannylongeuay/ndsq-wedding
           username: ${{ secrets.DOCKER_USERNAME }}
