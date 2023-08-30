@@ -5,4 +5,4 @@ resources:
   - deployment.yaml
 images:
   - name: dannylongeuay/ndsq-wedding
-    newTag: 0.0.3
+    newTag: 0.1.0
