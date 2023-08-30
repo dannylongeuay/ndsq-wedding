@@ -3,6 +3,7 @@ FROM rust:1.71-bullseye as builder
 RUN cargo install trunk
 RUN rustup target add wasm32-unknown-unknown
 
+RUN mkdir -p /app
 WORKDIR /app
 COPY . .
 

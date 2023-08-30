@@ -33,8 +33,8 @@ jobs:
       - name: Find and Replace Package
         uses: jacobtomlinson/gha-find-replace@v2
         with:
-          find: 'version = "\d+\.\d+\.\d+"'
-          replace: 'version = "${{needs.info.outputs.version}}"'
+          find: '^version = "\d+\.\d+\.\d+"'
+          replace: '^version = "${{needs.info.outputs.version}}"'
           include: "Cargo.toml"
       - name: Find and Replace Kustomization
         uses: jacobtomlinson/gha-find-replace@v2
