@@ -17,17 +17,8 @@ spec:
         app.kubernetes.io/name: wedding
         app.kubernetes.io/instance: wedding
     spec:
-      securityContext:
-        fsGroup: 2000
       containers:
         - name: wedding
-          securityContext:
-            capabilities:
-              drop:
-              - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
           image: "dannylongeuay/ndsq-wedding:latest"
           imagePullPolicy: Always
           ports:
