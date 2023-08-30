@@ -21,9 +21,6 @@ spec:
         fsGroup: 2000
       containers:
         - name: wedding
-          args:
-            - "node"
-            - "build"
           securityContext:
             capabilities:
               drop:
