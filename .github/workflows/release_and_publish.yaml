@@ -30,11 +30,11 @@ jobs:
     needs: info
     steps:
       - uses: actions/checkout@v3
-      - name: Find and Replace Package
+      - name: Find and Replace Cargo
         uses: jacobtomlinson/gha-find-replace@v2
         with:
-          find: '^version = "\d+\.\d+\.\d+"'
-          replace: '^version = "${{needs.info.outputs.version}}"'
+          find: '\nversion = "\d+\.\d+\.\d+"\n'
+          replace: '\nversion = "${{needs.info.outputs.version}}"\n'
           include: "Cargo.toml"
       - name: Find and Replace Kustomization
         uses: jacobtomlinson/gha-find-replace@v2
