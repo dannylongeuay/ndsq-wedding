@@ -163,6 +163,9 @@ fn InfiniteScroller(
             .body()
             .expect("body to be present")
             .offset_height();
+        if (doc_height as f64) < inner_height * 2.0 {
+            return;
+        }
         if scroll_y + inner_height >= (doc_height - (doc_height / 5)) as f64 {
             set_photo_ids.update(|photo_ids| {
                 photo_ids.remove(0);
@@ -253,7 +256,7 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
     let clips_end = 4 as usize;
     let initial_indexes: Vec<usize> = (clips_start..=clips_end).collect();
     let (clip_ids, set_clip_ids) = create_signal(cx, initial_indexes);
-    let (clip_names, set_clip_names) = create_signal(cx, clips[clips_start..clips_end].to_vec());
+    let (clip_names, set_clip_names) = create_signal(cx, clips[clips_start..=clips_end].to_vec());
     let add_clips = move || {
         let scroll_y = window().scroll_y().unwrap();
         let inner_height = window().inner_height().unwrap().as_f64().unwrap();
@@ -261,6 +264,9 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
             .body()
             .expect("body to be present")
             .offset_height();
+        if (doc_height as f64) < inner_height * 1.5 {
+            return;
+        }
         if scroll_y + inner_height >= (doc_height - (doc_height / 5)) as f64 {
             set_clip_ids.update(|clip_ids| {
                 clip_ids.remove(0);
