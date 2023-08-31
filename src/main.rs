@@ -53,7 +53,7 @@ fn Header(
                         <ul/>
                         <ul>
                             <li>
-                                <h1>"NDSquared Wedding Gallery"</h1>
+                                <h1>"ND Wedding Gallery"</h1>
                             </li>
                         </ul>
                         <ul/>
@@ -129,8 +129,8 @@ fn LandingSlot(cx: Scope, set_selection: WriteSignal<SlotSelection>) -> impl Int
         <article>
             <header>Clips</header>
             <section>
-                <video autoplay loop muted playsinline>
-                    <source src="https://ik.imagekit.io/dannylongeuay/ndsq/nd_pond_pan.mp4" />
+                <video autoplay loop muted playsinline width="300">
+                    <source src="https://ik.imagekit.io/dannylongeuay/ndsq/nd_pond_pan.mp4" type="video/mp4" />
                 </video>
             </section>
             <button
@@ -163,7 +163,7 @@ fn InfiniteScroller(
             .body()
             .expect("body to be present")
             .offset_height();
-        if scroll_y + inner_height >= (doc_height - 1600) as f64 {
+        if scroll_y + inner_height >= (doc_height - (doc_height / 5)) as f64 {
             set_photo_ids.update(|photo_ids| {
                 photo_ids.remove(0);
                 if let Some(last) = photo_ids.last() {
@@ -250,7 +250,7 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
         "nd_final_kiss",
     ];
     let clips_start = 0 as usize;
-    let clips_end = 5 as usize;
+    let clips_end = 4 as usize;
     let initial_indexes: Vec<usize> = (clips_start..=clips_end).collect();
     let (clip_ids, set_clip_ids) = create_signal(cx, initial_indexes);
     let (clip_names, set_clip_names) = create_signal(cx, clips[clips_start..clips_end].to_vec());
@@ -261,7 +261,7 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
             .body()
             .expect("body to be present")
             .offset_height();
-        if scroll_y + inner_height >= (doc_height - 200) as f64 {
+        if scroll_y + inner_height >= (doc_height - (doc_height / 5)) as f64 {
             set_clip_ids.update(|clip_ids| {
                 clip_ids.remove(0);
                 if let Some(last) = clip_ids.last() {
@@ -286,10 +286,10 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
             view=move |cx, clip_name|
             view! { cx,
                 <article>
-                    <video autoplay loop muted playsinline>
+                    <video autoplay loop muted playsinline width="300">
                         <source src=move || {
                             format!("https://ik.imagekit.io/dannylongeuay/ndsq/{}.mp4", clip_name)
-                        }/>
+                        } type="video/mp4"/>
                     </video>
                 </article>
             }
