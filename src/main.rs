@@ -175,14 +175,7 @@ fn InfiniteScroller(
             });
         }
     };
-    let scrolled = move |_| {
-        add_photos();
-    };
-    let scrollend = move |_| {
-        add_photos();
-    };
-    window_event_listener(ev::scroll, scrolled);
-    window_event_listener(ev::scrollend, scrollend);
+    set_interval(add_photos, std::time::Duration::from_millis(500));
     view! { cx,
         <For
             each=move || photo_ids.get()
@@ -281,10 +274,7 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
             set_clip_names.set(next_clips);
         }
     };
-    let scrolled = move |_| {
-        add_clips();
-    };
-    window_event_listener(ev::scroll, scrolled);
+    set_interval(add_clips, std::time::Duration::from_millis(500));
     view! { cx,
         <For
             each=move || clip_names.get()
