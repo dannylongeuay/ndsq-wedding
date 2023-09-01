@@ -19,11 +19,8 @@ video {
   margin: auto;
 }
 
+h1,
 header {
   text-align: center;
   font-size: 32px;
-}
-
-body>nav {
-  background-color: var(--card-background-color);
 }

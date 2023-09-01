@@ -8,8 +8,8 @@ fn main() {
 fn App(cx: Scope) -> impl IntoView {
     let (selected, set_selected) = create_signal(cx, SlotSelection::Landing);
     view! { cx,
-        <Header selection=selected set_selection=set_selected/>
         <main class="container">
+        <Header selection=selected set_selection=set_selected/>
         <Slot selection=selected>
             <Landing slot >
                 <LandingSlot set_selection=set_selected/>
@@ -37,28 +37,14 @@ fn Header(
     view! { cx,
         { move || if selection.get() != SlotSelection::Landing {
                 view! { cx,
-                    <nav class="container-fluid">
-                        <ul>
-                            <li>
-                                <button
-                                on:click=move |_| { set_selection.set(SlotSelection::Landing)}
-                                >Back</button>
-                            </li>
-                        </ul>
-                    </nav>
-                }
+                    <button
+                    on:click=move |_| { set_selection.set(SlotSelection::Landing)}
+                    >Back</button>
+                }.into_any()
             } else {
                 view! { cx,
-                    <nav class="container-fluid">
-                        <ul/>
-                        <ul>
-                            <li>
-                                <h1>"ND Wedding Gallery"</h1>
-                            </li>
-                        </ul>
-                        <ul/>
-                    </nav>
-                }
+                    <h1>"ND Wedding Gallery"</h1>
+                }.into_any()
         }}
     }
 }
@@ -156,33 +142,16 @@ fn InfiniteScroller(
     let photos_end = 5;
     let initial_indexes: Vec<i32> = (photos_start..=photos_end).collect();
     let (photo_ids, set_photo_ids) = create_signal(cx, initial_indexes);
-    let add_photos = move || {
-        let scroll_y = window().scroll_y().unwrap();
-        let inner_height = window().inner_height().unwrap().as_f64().unwrap();
-        let doc_height = document()
-            .body()
-            .expect("body to be present")
-            .offset_height();
-        if (doc_height as f64) < inner_height * 2.0 {
-            return;
-        }
-        if scroll_y + inner_height >= (doc_height - (doc_height / 5)) as f64 {
-            set_photo_ids.update(|photo_ids| {
+    let add_photos = move |_| {
+        set_photo_ids.update(|photo_ids| {
+            if let Some(last) = photo_ids.last() {
+                photo_ids.push((last % photos_length) + 1);
+            }
+            while photo_ids.len() > 5 {
                 photo_ids.remove(0);
-                if let Some(last) = photo_ids.last() {
-                    photo_ids.push((last % photos_length) + 1);
-                }
-            });
-        }
+            }
+        });
     };
-    let scrolled = move |_| {
-        add_photos();
-    };
-    let scrollend = move |_| {
-        add_photos();
-    };
-    window_event_listener(ev::scroll, scrolled);
-    window_event_listener(ev::scrollend, scrollend);
     view! { cx,
         <For
             each=move || photo_ids.get()
@@ -197,6 +166,9 @@ fn InfiniteScroller(
                 </article>
             }
         />
+        <button
+            on:click=add_photos
+        >Load More</button>
     }
 }
 
@@ -257,34 +229,21 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
     let initial_indexes: Vec<usize> = (clips_start..=clips_end).collect();
     let (clip_ids, set_clip_ids) = create_signal(cx, initial_indexes);
     let (clip_names, set_clip_names) = create_signal(cx, clips[clips_start..=clips_end].to_vec());
-    let add_clips = move || {
-        let scroll_y = window().scroll_y().unwrap();
-        let inner_height = window().inner_height().unwrap().as_f64().unwrap();
-        let doc_height = document()
-            .body()
-            .expect("body to be present")
-            .offset_height();
-        if (doc_height as f64) < inner_height * 1.5 {
-            return;
-        }
-        if scroll_y + inner_height >= (doc_height - (doc_height / 5)) as f64 {
-            set_clip_ids.update(|clip_ids| {
-                clip_ids.remove(0);
-                if let Some(last) = clip_ids.last() {
-                    clip_ids.push((last + 1) % clips.len());
-                }
-            });
-            let mut next_clips: Vec<&str> = Vec::new();
-            for clip_id in clip_ids.get() {
-                next_clips.push(clips[clip_id])
+    let add_clips = move |_| {
+        set_clip_ids.update(|clip_ids| {
+            if let Some(last) = clip_ids.last() {
+                clip_ids.push((last + 1) % clips.len());
             }
-            set_clip_names.set(next_clips);
+            while clip_ids.len() > 5 {
+                clip_ids.remove(0);
+            }
+        });
+        let mut next_clips: Vec<&str> = Vec::new();
+        for clip_id in clip_ids.get() {
+            next_clips.push(clips[clip_id])
         }
+        set_clip_names.set(next_clips);
     };
-    let scrolled = move |_| {
-        add_clips();
-    };
-    window_event_listener(ev::scroll, scrolled);
     view! { cx,
         <For
             each=move || clip_names.get()
@@ -300,5 +259,8 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
                 </article>
             }
         />
+        <button
+            on:click=add_clips
+        >Load More</button>
     }
 }
