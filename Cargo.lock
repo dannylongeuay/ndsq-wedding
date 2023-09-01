@@ -925,9 +925,10 @@ dependencies = [
 
 [[package]]
 name = "ndsq-wedding"
-version = "0.1.3"
+version = "0.3.0"
 dependencies = [
  "leptos",
+ "web-sys",
 ]
 
 [[package]]

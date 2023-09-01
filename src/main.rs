@@ -143,22 +143,34 @@ fn InfiniteScroller(
     let initial_indexes: Vec<i32> = (photos_start..=photos_end).collect();
     let (photo_ids, set_photo_ids) = create_signal(cx, initial_indexes);
     let add_photos = move |_| {
+        let scroller = document().get_element_by_id("scroller").expect("exists");
+        let last_el = scroller.last_element_child().unwrap();
+        let last_el_id = last_el.get_attribute("id").unwrap();
+        let last_el_top = last_el.get_bounding_client_rect().top();
         set_photo_ids.update(|photo_ids| {
-            if let Some(last) = photo_ids.last() {
-                photo_ids.push((last % photos_length) + 1);
+            if let Some(last) = photo_ids.last().cloned() {
+                for i in 0..4 {
+                    photo_ids.push(((last + 1 + i) % photos_length) + 1);
+                }
             }
-            while photo_ids.len() > 5 {
+            while photo_ids.len() > 10 {
                 photo_ids.remove(0);
             }
         });
+        let shifted_el = document().get_element_by_id(&last_el_id).unwrap();
+        let shifted_el_top = shifted_el.get_bounding_client_rect().top();
+        let el_diff = shifted_el_top - last_el_top;
+        let new_scroll_y = window().scroll_y().unwrap() + el_diff;
+        window().scroll_to_with_x_and_y(0.0, new_scroll_y);
     };
     view! { cx,
+        <div id="scroller">
         <For
             each=move || photo_ids.get()
             key=|&photo_id| photo_id
             view=move |cx, id|
             view! { cx,
-                <article>
+                <article id=move || alt_format.replace("{}", &id.to_string())>
                     <img
                         src=move || url_format.replace("{}", &id.to_string())
                         alt=move || alt_format.replace("{}", &id.to_string())
@@ -166,6 +178,7 @@ fn InfiniteScroller(
                 </article>
             }
         />
+        </div>
         <button
             on:click=add_photos
         >Load More</button>
@@ -230,11 +243,17 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
     let (clip_ids, set_clip_ids) = create_signal(cx, initial_indexes);
     let (clip_names, set_clip_names) = create_signal(cx, clips[clips_start..=clips_end].to_vec());
     let add_clips = move |_| {
+        let scroller = document().get_element_by_id("scroller").expect("exists");
+        let last_el = scroller.last_element_child().unwrap();
+        let last_el_id = last_el.get_attribute("id").unwrap();
+        let last_el_top = last_el.get_bounding_client_rect().top();
         set_clip_ids.update(|clip_ids| {
-            if let Some(last) = clip_ids.last() {
-                clip_ids.push((last + 1) % clips.len());
+            if let Some(last) = clip_ids.last().cloned() {
+                for i in 0..4 {
+                    clip_ids.push((last + i + 1) % clips.len());
+                }
             }
-            while clip_ids.len() > 5 {
+            while clip_ids.len() > 9 {
                 clip_ids.remove(0);
             }
         });
@@ -243,14 +262,20 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
             next_clips.push(clips[clip_id])
         }
         set_clip_names.set(next_clips);
+        let shifted_el = document().get_element_by_id(&last_el_id).unwrap();
+        let shifted_el_top = shifted_el.get_bounding_client_rect().top();
+        let el_diff = shifted_el_top - last_el_top;
+        let new_scroll_y = window().scroll_y().unwrap() + el_diff;
+        window().scroll_to_with_x_and_y(0.0, new_scroll_y);
     };
     view! { cx,
+        <div id="scroller">
         <For
             each=move || clip_names.get()
             key=|&clip_name| clip_name
             view=move |cx, clip_name|
             view! { cx,
-                <article>
+                <article id=move|| format!("{}", clip_name)>
                     <video autoplay loop muted playsinline width="300">
                         <source src=move || {
                             format!("https://ik.imagekit.io/dannylongeuay/ndsq/{}.mp4", clip_name)
@@ -259,6 +284,7 @@ fn ClipsSlot(cx: Scope) -> impl IntoView {
                 </article>
             }
         />
+        </div>
         <button
             on:click=add_clips
         >Load More</button>
