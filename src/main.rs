@@ -252,12 +252,8 @@ fn ClipsSlot(cx: Scope, set_selection: WriteSignal<SlotSelection>) -> impl IntoV
         "nd_final_send_off",
         "nd_final_kiss",
     ];
-    let clips_start = 0 as usize;
-    let inner_height = window().inner_height().unwrap().as_f64().unwrap();
-    let clips_end = match inner_height > 1200.0 {
-        true => 6,
-        false => 4,
-    };
+    let clips_start = 0;
+    let clips_end = 4;
     let initial_indexes: Vec<usize> = (clips_start..=clips_end).collect();
     let (clip_ids, set_clip_ids) = create_signal(cx, initial_indexes);
     let (clip_names, set_clip_names) = create_signal(cx, clips[clips_start..=clips_end].to_vec());
