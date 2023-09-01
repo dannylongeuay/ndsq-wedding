@@ -24,12 +24,6 @@ header {
   font-size: 32px;
 }
 
-nav {
+body>nav {
   background-color: var(--card-background-color);
-}
-
-div.scroll {
-  overflow-y: scroll;
-  height: 100vh;
-  transition: height 2s ease-out;
 }
