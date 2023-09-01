@@ -28,6 +28,12 @@ nav {
   background-color: var(--card-background-color);
 }
 
+html,
+body {
+  overflow: hidden;
+  position: fixed;
+}
+
 div.scroll {
   overflow-y: scroll;
   height: 100vh;
